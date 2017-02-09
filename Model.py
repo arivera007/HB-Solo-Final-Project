@@ -1,29 +1,30 @@
-from flask_sqlalchemy import SQL_Alchemy
-
-
-
-
+from flask_sqlalchemy import SQLAlchemy
 
 # Here's where we create the idea of our database. We're getting this through
 # the Flask-SQLAlchemy library. On db, we can find the `session`
 # object, where we do most of our interactions (like committing, etc.)
-
 db = SQLAlchemy()
 
+from flask import Flask
+
+app = Flask(__name__)
+
+
 class Tweet(db.Model):
+
     """ Tweets for an specific term"""
-    # or should I just make it for anytime anywhere?
+
+    # or should I just make it for anytime anywhere??
 
     __tablename__ = "tweets"
 
-    tweet_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=True)
+    tweet_id = db.Column(db.BIGINT, primary_key=True)
+    user_id = db.Column(db.BIGINT, nullable=True)
     text = db.Column(db.String(150), nullable=False)
-    city = db.Column(db.String(50), nullable=True)
-    state = db.Column(db.String(50), nullable=True)
-    coordinates = db.Column(db.String(50), nullable=True)
+    lat = db.Column(db.Float)
+    lon = db.Column(db.Float)
+    city_id = db.Column(db.Integer, nullable=True)
     sentiment = db.Column(db.Integer, nullable=True)
-
 
     def __repr__(self):
         """ Returns infor about the tweet """
@@ -31,18 +32,24 @@ class Tweet(db.Model):
         return "< TweetID: %s, Text: %s, City: %s >" % (self.tweet_id, self.text, self.city)
 
 
-# *** Different class? *****
+class Geocode(db.Model):
+    """ Tweets for an specific term"""
 
-def insertTweet(tweet_id, user_id, text, city, coordinates):
-    """ Inserts tweets in DB """
+    __tablename__ = "cachedgeocodes"
 
-    tweet_data = Tweet(tweet_id=tweet_id, user_id=user_id, text=text, city=city, coordinates=coordinates)
-    db.session.add(tweet_data)
-    db.session.commit()
+    city_id = db.Column(db.Integer, primary_key=True)
+    city = db.Column(db.String(50), nullable=False)
+    state = db.Column(db.String(50), nullable=False)
+    lat = db.Column(db.Float, nullable=False)
+    lon = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        """ Returns infor about the tweet """
+
+        return "< TweetID: %s, Text: %s, City: %s >" % (self.tweet_id, self.text, self.city)
 
 
-
-    ##############################################################################
+##############################################################################
 # Helper functions
 
 def init_app():
@@ -51,14 +58,14 @@ def init_app():
     app = Flask(__name__)
 
     connect_to_db(app)
-    print "Connected to DB."
+    print "Connected to DB......"
 
 
 def connect_to_db(app):
     """Connect the database to our Flask app."""
 
     # Configure to use our database.
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///cars'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///tweets'
     app.config['SQLALCHEMY_ECHO'] = False
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app

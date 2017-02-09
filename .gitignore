@@ -1,0 +1,6 @@
+env/
+play/
+secrets.sh
+*.pyc
+database.sql
+
