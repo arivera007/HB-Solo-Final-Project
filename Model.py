@@ -23,6 +23,7 @@ class Tweet(db.Model):
     text = db.Column(db.String(150), nullable=False)
     lat = db.Column(db.Float)
     lon = db.Column(db.Float)
+    author_location = db.Column(db.String(50))  # What is the max in twitter ??
     city_id = db.Column(db.Integer, nullable=True)
     sentiment = db.Column(db.Integer, nullable=True)
 
