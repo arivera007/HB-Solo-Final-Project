@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block head %}
+
+    <title>Tweets Map</title>
+    <style>
+        html, body, #tweets-map {
+            height: 100%;
+            margin: 0px;
+        }
+
+        .window-content {
+            color: #04162b;;
+        }
+    </style>
+
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script>
+        var map;
+
+        function initMap() {
+            var mapOptions = {
+                zoom: 8,
+//                center: new google.maps.LatLng(39.8,-95.583068847656)   //Center of US
+                center: new google.maps.LatLng(37.785, -122.435)
+            };
+
+            map = new google.maps.Map(
+                    document.getElementById('tweets-map'),
+                    mapOptions);
+        }
+
+        //Using jscript "async defer" instead
+        google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
+<!--
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=KEY_GOES_HERE&callback=initMap"><script>
+-->
+{% endblock %}
+
+
+{% block body %}
+    <div id="tweets-map"></div>
+{% endblock %}

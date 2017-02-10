@@ -25,11 +25,12 @@ api = tweepy.API(auth)
 def get_tweets():
     """ Read Tweets and add them to data base """
 
-
     global RECORDS_SKIPPED, DUPLICATED_RECORDS  # ?? How  to manage this non globally?
 
-    near_tweets = api.search(q='trump', lang='en', count=100,
-                             geocode="37.7749300,-122.4194200,1km")
+    # near_tweets = api.search(q='trump', lang='en', count=100,
+    #                          geocode="37.7749300,-122.4194200,1km")
+    near_tweets = api.search(q='trump', lang='en', count=450,
+                             geocode="39.8,-95.583068847656,2500km")
     tweets_read = len(near_tweets)
     for tweet in near_tweets:
         city_id = None
@@ -88,6 +89,5 @@ def googleMapApiOrCached(location):
 
 if __name__ == '__main__':
     Model.connect_to_db(Model.app)
-    Model.db.create_all()
 
     get_tweets()
