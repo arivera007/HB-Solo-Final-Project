@@ -17,6 +17,7 @@
     <script src="https://code.jquery.com/jquery.js"></script>
     <script>
         var map, heatmap;
+        var tweets = {{ geo_tweets|safe}}
 
         function initMap() {
             var mapOptions = {
@@ -28,14 +29,31 @@
             map = new google.maps.Map(
                     document.getElementById('tweets-map'),
                     mapOptions);
-            heatmap = new google.maps.visualization.HeatmapLayer({
-                data: getPoints(),
-                map: map
-        });
+            
+            // heatmap = new google.maps.visualization.HeatmapLayer({
+            //     data: getPoints(),
+            //     map: map
+            // });
+            var test;
+            for (i=0;i<tweets.length;i++){
+                test = new google.maps.Marker({
+                    position: new google.maps.LatLng(tweets[i][0], tweets[i][1]),
+                    map: map
+                });
+            }
         }
 
 
-        function getPoints() {
+        function getPoints(){
+            map_points = []
+            for (i=0;i<tweets.length;i++){
+                map_points.push(new google.maps.LatLng(tweets[i][0], tweets[i][1]))
+            }
+            // return new google.maps.MVCArray(map_points);
+            return map_points;
+        }
+
+        function getPointsSample() {
         return [
           new google.maps.LatLng(37.782551, -122.445368),
           new google.maps.LatLng(37.782745, -122.444586),

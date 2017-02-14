@@ -25,7 +25,11 @@ def index():
 def map():
     """Show map with tweets."""
 
-    return render_template("map.html")
+    geo_tup = Model.db.session.query(Model.Tweet.lat, Model.Tweet.lon).all()
+    # JavaScript does not understand tuples.
+    geo_tweets = [[x[1], x[0]] for x in geo_tup]
+
+    return render_template("map.html", geo_tweets=geo_tweets)
 
 #---------------------------------------------------------------------#
 

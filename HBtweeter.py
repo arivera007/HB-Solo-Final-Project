@@ -35,6 +35,7 @@ def get_tweets():
     for tweet in near_tweets:
         city_id = None
         if tweet.coordinates is None:
+            print tweet.coordinates
             # if tweet.author.location:
             #     print tweet.author.location
             #     lon, lat, city_id = googleMapApiOrCached(tweet.author.location)
