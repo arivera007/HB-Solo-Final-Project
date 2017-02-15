@@ -84,3 +84,7 @@ if __name__ == "__main__":
 
     connect_to_db(app)
     print "Connected to DB."
+
+    # if needs to start from ZERO. ??
+    # load .sql file with data dumped to tweeter and cachedgeocode
+    # load script that converts
