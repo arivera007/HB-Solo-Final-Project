@@ -2,6 +2,7 @@ import os
 import tweepy
 import Model
 from sqlalchemy import exc
+import pdb
 
 
 RECORDS_SKIPPED = 0      # Best way to put this variable, global for now ??
@@ -86,9 +87,32 @@ def googleMapApiOrCached(location):
 
     return lon, lat, city_id
 
+
+def test_GoogleGeo():
+    import urllib2
+    import os
+    import json
+
+    address = "1600+Amphitheatre+Parkway,+Mountain+View,+CA"
+    key = os.environ['GOOGLE_MAP_API_GEOCODE']
+    url = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (address, key)
+
+    response = urllib2.urlopen(url)
+    jsongeocode = json.loads(response.read())
+    geocode = jsongeocode["results"][0]['geometry']['location']
+
+    pdb.set_trace()
+
+    print geocode['lat'], geocode['lng']
+    # make this function a test for the API, this should be:
+    # 37.4219493 -122.0847727
+
+
 #-------------------------------------------------------------------#
 
 if __name__ == '__main__':
     Model.connect_to_db(Model.app)
 
-    get_tweets()
+    # get_tweets()
+    test_GoogleGeo()
+
