@@ -1,10 +1,27 @@
-CREATE or REPLACE FUNCTION getGoogleGeo (location text) RETURNS  INTEGER AS $$
+CREATE or replace FUNCTION getGeocode (location text) RETURNS  INTEGER AS $$
+    import urllib2
+    import os
+    import json
+
+
+    query = plpy.prepare("SELECT city_id FROM cachedgeocodes WHERE city = $1", ["text"])
+    recds = plpy.execute(query, [location])
+    if recds.nrows() > 0:
+        return recds[0]['city_id']
+    else:
+        return 0
+
+
+$$ LANGUAGE plpythonu;
+
+CREATE or REPLACE FUNCTION getGeoFromAPI (location text) RETURNS  INTEGER AS $$
     import urllib2
     import os
     import json
 
     address = '+'.join(location.split(' ')).rstrip('+') # incase we get extra + for the empty spaces
     key = ''
+
     url = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (address, key)
 
     response = urllib2.urlopen(url)
@@ -18,7 +35,7 @@ CREATE or REPLACE FUNCTION getGoogleGeo (location text) RETURNS  INTEGER AS $$
         # Change to COuntry instead of state, city to city_state ??
         query = plpy.prepare("INSERT INTO cachedgeocodes (city, state, lat, lon) VALUES ($1, $2, $3, $4) returning city_id", ["text", "text", "float", "float"])
 
-        recds = plpy.execute(query, [city+' , '+state, country, geocode['lat'], geocode['lng']])
+        recds = plpy.execute(query, [city+', '+state, country, geocode['lat'], geocode['lng']])
 
 
         return recds[0]['city_id']
