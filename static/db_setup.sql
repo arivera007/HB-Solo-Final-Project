@@ -1,6 +1,6 @@
---CREATE TYPE geoResult AS (city_id text, lat float, lon float);
+-- CREATE TYPE geoResult AS (city_id int, lat float, lon float);
 
-CREATE or replace FUNCTION getGeocode (location text) RETURNS  SETOF geoResult AS $$
+CREATE or replace FUNCTION getGeocode (location text) RETURNS SETOF geoResult AS $$
     import urllib2
     import os
     import json
@@ -9,21 +9,16 @@ CREATE or replace FUNCTION getGeocode (location text) RETURNS  SETOF geoResult A
     query = plpy.prepare("SELECT city_id, lat, lon FROM cachedgeocodes WHERE city = $1", ["text"])
     recds = plpy.execute(query, [location])
     if recds.nrows() > 0:
-#        return recds[0]['city_id']
         return recds
     else:
         query = plpy.prepare("SELECT getGeoFromAPI($1)", ["text"])
         recds = plpy.execute(query,[location])
-        return recds
-#        if recds.nrows() > 0:
-#            return recds[0]['getgeofromapi']
-#        else:
-#            return 0
+        return recds[0] # My problem is here.
 
 
 $$ LANGUAGE plpythonu;
 
-CREATE or REPLACE FUNCTION getGeoFromAPI (location text) RETURNS  SETOF geoResult AS $$
+CREATE or REPLACE FUNCTION getGeoFromAPI (location text) RETURNS SETOF geoResult AS $$
     import urllib2
     import os
     import json
@@ -46,15 +41,13 @@ CREATE or REPLACE FUNCTION getGeoFromAPI (location text) RETURNS  SETOF geoResul
         query = plpy.prepare("INSERT INTO cachedgeocodes (city, state, lat, lon) VALUES ($1, $2, $3, $4) returning city_id, lat, lon", ["text", "text", "float", "float"])
         # recds = plpy.execute(query, [city+', '+state, country, geocode['lat'], geocode['lng']])
         recds = plpy.execute(query, [location, country, geocode['lat'], geocode['lng']])
+        if recds.nrows > 0:
+            return recds
+#            return [{'city_id': recds[0]['city_id'], 'lat':geocode['lat'], 'lon':geocode['lng']}]
+#            return {'city_id': 1, 'lat':geocode['lat'], 'lon':geocode['lng']}
 
-        return recds
-#        if recds.nrows() > 0:
-#            return recds[0]['city_id']
-#        else:
- #           return 0
-    else:
-        null_recd = [{'city_id':0, 'lat':0, 'lon':0}]
-        return null_recd
+    null_recd = [{'city_id':0, 'lat':0, 'lon':0}]
+    return null_recd
 
 
 $$ LANGUAGE plpythonu;
