@@ -34,10 +34,13 @@
             //     data: getPoints(),
             //     map: map
             // });
-            var test;
+            var test; 
+            var listPoints = getPointsSample();
+            // console.log(str(tweets.length));
             for (i=0;i<tweets.length;i++){
                 test = new google.maps.Marker({
                     position: new google.maps.LatLng(tweets[i][0], tweets[i][1]),
+                    // position: listPoints[i],
                     map: map
                 });
             }
