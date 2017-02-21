@@ -5,11 +5,15 @@ DECLARE
     r tweets%rowtype;
     recd geoResult%rowtype;
 BEGIN
-    FOR r in  select * from tweets where city_id = 1 limit 10
+    FOR r in  select * from tweets where city_id = 1 limit 5
     LOOP
-        recd = getGeocode(r.author_location);
-        UPDATE tweets SET city_id = recd.city_id, lat = recd.lat, lon = recd.lon
-        WHERE tweet_id = r.tweet_id;
+        IF r.author_location != '' THEN
+            raise notice '%', r.author_location;
+            recd = getGeocode(r.author_location);
+            raise notice '%', recd;
+            UPDATE tweets SET city_id = cast(recd.city_id as int), lat = recd.lat, lon = recd.lon
+            WHERE tweet_id = r.tweet_id;
+        END IF;
     END LOOP;
 END
 $BODY$
