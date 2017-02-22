@@ -30,62 +30,68 @@ def get_tweets():
 
     # near_tweets = api.search(q='trump', lang='en', count=100,
     #                          geocode="37.7749300,-122.4194200,1km")
-    near_tweets = api.search(q='trump', lang='en', count=450,
+    near_tweets = api.search(q='trump', lang='en', count=400,
                              geocode="39.8,-95.583068847656,2500km")
+
+    # Starting counters
+    DUPLICATED_RECORDS = 0
+    RECORDS_SKIPPED = 0
+    RECORDS_COMMITED = 0
     tweets_read = len(near_tweets)
+    tweet_with_location = True
+
+    # Constructing Tweets
     for tweet in near_tweets:
         city_id = None
         if tweet.coordinates is None:
-            print tweet.coordinates
-            # if tweet.author.location:
-            #     print tweet.author.location
-            #     lon, lat, city_id = googleMapApiOrCached(tweet.author.location)
-            lon, lat = (37.7749300, -122.4194200)
-            city_id = 1
-            # else:
-                # RECORDS_SKIPPED += 1    # Add different variable ???????
+            if tweet.author.location:
+                print tweet.author.location
+                city_id, lat, lon = getGeoCode(tweet.author.location)
+                if city_id == 0:
+                    tweet_with_location = False
 
-        else:
+            else:
+                tweet_with_location = False
+        else:   # Best case scenario, when the tweet came with geo info.
             lon = tweet.coordinates['coordinates'][1]
             lat = tweet.coordinates['coordinates'][0]
 
-        tweet_data = Model.Tweet(tweet_id=tweet.id,
-                                 user_id=tweet.author.id,
-                                 text=tweet.text,
-                                 author_location=tweet.author.location,
-                                 city_id=city_id, lat=lat, lon=lon)
-        try:
-            Model.db.session.add(tweet_data)
-            Model.db.session.commit()
-        except exc.IntegrityError:
-            DUPLICATED_RECORDS += 1
-            Model.db.session.rollback()
-        except exc.SQLAlchemyError as e:        # How do I get the description
+        if tweet_with_location:
+            tweet_data = Model.Tweet(tweet_id=tweet.id,
+                                     user_id=tweet.author.id,
+                                     text=tweet.text,
+                                     author_location=tweet.author.location,
+                                     city_id=city_id, lat=lat, lon=lon)
+            try:
+                Model.db.session.add(tweet_data)
+                Model.db.session.commit()
+                RECORDS_COMMITED += 1
+            except exc.IntegrityError:
+                DUPLICATED_RECORDS += 1
+                Model.db.session.rollback()
+            except exc.SQLAlchemyError as e:        # How do I get the description
+                RECORDS_SKIPPED += 1
+
+            print city_id, lat, lon
+        else:
             RECORDS_SKIPPED += 1
 
-    print "Records duplicated: %s, Record Skkiped %s, out of %s." % (
-        str(DUPLICATED_RECORDS), str(RECORDS_SKIPPED), str(tweets_read))
+        tweet_with_location = True          # Resetting this flag for the next tweet.
+
+    print "Records duplicated: %s, Record Skipped %s, Records Committed: %s,    Out of %s." % (
+        str(DUPLICATED_RECORDS), str(RECORDS_SKIPPED), str(RECORDS_COMMITED), str(tweets_read))
 
 
-def googleMapApiOrCached(location):
-    my_location = [x.strip() for x in location.split(',')]
-    city = my_location[0]   # What if there are more than 1 spaces in between words
-    state = my_location[1]
-    geocode = Model.Geocode.query.filter(Model.Geocode.city.like(city),
-                                         Model.Geocode.state.like(state)).first()
-    if geocode:
-        city_id = geocode.city_id
-        lon = geocode.lon
-        lat = geocode.lat
-    else:
-        # go to googlemapapi ang get lat lon   # TODO
-        # and update caching table
-        # and get city_id
-        city_id = 2
-        lon = 122.4116
-        lat = 37.7887
-
-    return lon, lat, city_id
+def getGeoCode(location):
+    # recds = Model.db.session.execute("getgeocode @locations:location",params={'location':'San Francisco, CA'})
+    f = Model.db.text('select getgeocode(:locations)')
+    recds = Model.db.session.execute(f, {'locations': location}).fetchone()
+    recd = recds['getgeocode']  # Why does it return text ?
+    geocode = recd[1:-1].split(',')
+    city_id = int(geocode[0])
+    lat = float(geocode[1])
+    lon = float(geocode[2])
+    return city_id, lat, lon
 
 
 def test_GoogleGeo():
@@ -113,6 +119,4 @@ def test_GoogleGeo():
 if __name__ == '__main__':
     Model.connect_to_db(Model.app)
 
-    # get_tweets()
-    test_GoogleGeo()
-
+    get_tweets()

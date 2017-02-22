@@ -30,7 +30,7 @@ class Tweet(db.Model):
     def __repr__(self):
         """ Returns infor about the tweet """
 
-        return "< TweetID: %s, Text: %s, City: %s >" % (self.tweet_id, self.text, self.city)
+        return "< TweetID: %s, Text: %s, City: %s >" % (self.tweet_id, self.text, self.city_id)
 
 
 class Geocode(db.Model):

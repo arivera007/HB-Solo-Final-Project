@@ -27,11 +27,9 @@ def map():
 
     # geo_tup = Model.db.session.query(Model.Tweet.lat, Model.Tweet.lon).all()
     geo_tup = Model.db.session.query(Model.Tweet.lat, Model.Tweet.lon).filter(Model.Tweet.city_id != 1).all()
-    print len(geo_tup)
-    
+       
     # Translating to list because JavaScript does not understand tuples.
     geo_tweets = [[x[0], x[1]] for x in geo_tup]
-    print len(geo_tweets)
 
     return render_template("map.html", geo_tweets=geo_tweets)
 
