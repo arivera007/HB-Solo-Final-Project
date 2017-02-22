@@ -42,9 +42,8 @@ CREATE or REPLACE FUNCTION getGeoFromAPI (location text) RETURNS geoResult AS $$
         geocode = jsonresponse["results"][0]['geometry']['location']
         # In case I want to filter the good addresses, I could learn to check the results in "types".
         # type_of_place = [x["types"] for x in jsonresponse['results'][0]["address_components"] if "political" in x["types"]]
-        country = [x["long_name"] for x in jsonresponse['results'][0]["address_components"] if x["types"][0] == "country"]
-        # Maybe add if country = USA here, but I think this should be handled by an calling object.
-        plpy.notice(len(country)) 
+        country = [x["long_name"] for x in jsonresponse['results'][0]["address_components"] if "country" in x["types"]]
+        # Maybe add if country = USA here, but I think this should be handled by a calling object.
         country = country[0] if len(country) > 0 else location  
 
         # Change to COuntry instead of state, city to city_state ??

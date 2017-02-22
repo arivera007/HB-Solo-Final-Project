@@ -19,6 +19,8 @@
         var map, heatmap;
         var tweets = {{ geo_tweets|safe}}
 
+        console.log(tweets.length)
+
         function initMap() {
             var mapOptions = {
                 zoom: 5,
@@ -47,7 +49,7 @@
 
         function getPoints(){
             map_points = []
-            for (i=0;i<tweets.length;i++){
+            for (i=0; i<tweets.length; i++){
                 // map_points.push(new google.maps.LatLng(tweets[i][0], tweets[i][1]))
                 map_points.push({location: new google.maps.LatLng(tweets[i][0], tweets[i][1]), weight: 10000000})
             }

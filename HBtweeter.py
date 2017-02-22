@@ -26,7 +26,8 @@ api = tweepy.API(auth)
 def get_tweets():
     """ Read Tweets and add them to data base """
 
-    global RECORDS_SKIPPED, DUPLICATED_RECORDS  # ?? How  to manage this non globally?
+    # ?? Move them to non global space and log them somewhere.
+    global RECORDS_SKIPPED, DUPLICATED_RECORDS
 
     # near_tweets = api.search(q='trump', lang='en', count=100,
     #                          geocode="37.7749300,-122.4194200,1km")
@@ -88,9 +89,13 @@ def getGeoCode(location):
     recds = Model.db.session.execute(f, {'locations': location}).fetchone()
     recd = recds['getgeocode']  # Why does it return text ?
     geocode = recd[1:-1].split(',')
-    city_id = int(geocode[0])
-    lat = float(geocode[1])
-    lon = float(geocode[2])
+    try:
+        city_id = int(geocode[0])
+        lat = float(geocode[1])
+        lon = float(geocode[2])
+    except:   # Interested in TypeError, bur really anytype or error will cause dismissal of tweet.
+        city_id = lat = lon = 0
+
     return city_id, lat, lon
 
 
@@ -119,4 +124,5 @@ def test_GoogleGeo():
 if __name__ == '__main__':
     Model.connect_to_db(Model.app)
 
+    # print getGeoCode('San Francisco, CA'), Move to unitest ??
     get_tweets()
