@@ -35,6 +35,8 @@
                 data: getPoints(),
                 map: map
             });
+
+            heatmap.set('radius', heatmap.get('radius') ? null : 100)
         //     var test; 
         //     var listPoints = getPointsSample();
         //     for (i=0;i<tweets.length;i++){
@@ -51,7 +53,7 @@
             map_points = []
             for (i=0; i<tweets.length; i++){
                 // map_points.push(new google.maps.LatLng(tweets[i][0], tweets[i][1]))
-                map_points.push({location: new google.maps.LatLng(tweets[i][0], tweets[i][1]), weight: 10000000})
+                map_points.push({location: new google.maps.LatLng(tweets[i][0], tweets[i][1]), weight: 2})
             }
             return map_points;
         }
