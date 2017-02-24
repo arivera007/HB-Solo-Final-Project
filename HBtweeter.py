@@ -24,14 +24,19 @@ api = tweepy.API(auth)
 
 
 def get_tweets():
-    """ Read Tweets and add them to data base """
+    """ Read Tweets and add them to database """
+
+    get_search_tweets('Trump', 450)
+
+
+def get_search_tweets(search_term, tweet_count):
+    """ Read Tweets from based on a SEARCH term and add them to database. """
 
     # ?? Move them to non global space and log them somewhere.
     global RECORDS_SKIPPED, DUPLICATED_RECORDS
 
-    # near_tweets = api.search(q='trump', lang='en', count=100,
-    #                          geocode="37.7749300,-122.4194200,1km")
-    near_tweets = api.search(q='trump', lang='en', count=400,
+    # Calling twitter at center of US with a radisu wide enough to cover the whole country.
+    near_tweets = api.search(q=search_term, lang='en', count=tweet_count,
                              geocode="39.8,-95.583068847656,2500km")
 
     # Starting counters
@@ -81,9 +86,11 @@ def get_tweets():
 
     print "Records duplicated: %s, Record Skipped %s, Records Committed: %s,    Out of %s." % (
         str(DUPLICATED_RECORDS), str(RECORDS_SKIPPED), str(RECORDS_COMMITED), str(tweets_read))
+    return tweets_read
 
 
 def getGeoCode(location):
+    """ Gets the geocode from a location. """
     # recds = Model.db.session.execute("getgeocode @locations:location",params={'location':'San Francisco, CA'})
     f = Model.db.text('select getgeocode(:locations)')
     recds = Model.db.session.execute(f, {'locations': location}).fetchone()
@@ -99,30 +106,9 @@ def getGeoCode(location):
     return city_id, lat, lon
 
 
-def test_GoogleGeo():
-    import urllib2
-    import os
-    import json
-
-    address = "1600+Amphitheatre+Parkway,+Mountain+View,+CA"
-    key = os.environ['GOOGLE_MAP_API_GEOCODE']
-    url = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (address, key)
-
-    response = urllib2.urlopen(url)
-    jsongeocode = json.loads(response.read())
-    geocode = jsongeocode["results"][0]['geometry']['location']
-
-    pdb.set_trace()
-
-    print geocode['lat'], geocode['lng']
-    # make this function a test for the API, this should be:
-    # 37.4219493 -122.0847727
-
-
 #-------------------------------------------------------------------#
 
 if __name__ == '__main__':
     Model.connect_to_db(Model.app)
 
-    # print getGeoCode('San Francisco, CA'), Move to unitest ??
     get_tweets()

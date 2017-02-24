@@ -34,17 +34,17 @@ CREATE or REPLACE FUNCTION getGeoFromAPI (location text) RETURNS geoResult AS $$
         response = urllib2.urlopen(url)
     except urllib2.HTTPError:
         return {'city_id':None, 'lat':None, 'lon':None}
-    except plpy.SPIError:
+    except plpy.SPIError:   # Or any other error
         return {'city_id':None, 'lat':None, 'lon':None}
 
     jsonresponse = json.loads(response.read())
     if jsonresponse['status']  == 'OK':
         geocode = jsonresponse["results"][0]['geometry']['location']
-        # In case I want to filter the good addresses, I could learn to check the results in "types".
-        # type_of_place = [x["types"] for x in jsonresponse['results'][0]["address_components"] if "political" in x["types"]]
-        country = [x["long_name"] for x in jsonresponse['results'][0]["address_components"] if "country" in x["types"]]
         # Maybe add if country = USA here, but I think this should be handled by a calling object.
-        country = country[0] if len(country) > 0 else location  
+        try:
+            country = next(x["long_name"] for x in jsonresponse['results'][0]["address_components"] if "country" in x["types"])
+        except StopIteration: # Look for base exception
+            country = location
 
         # Change to COuntry instead of state, city to city_state ??
         query = plpy.prepare("INSERT INTO cachedgeocodes (city, state, lat, lon) VALUES ($1, $2, $3, $4) returning city_id, lat, lon", ["text", "text", "float", "float"])

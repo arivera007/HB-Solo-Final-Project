@@ -36,7 +36,9 @@
                 map: map
             });
 
+            // To make it more visible
             heatmap.set('radius', heatmap.get('radius') ? null : 100)
+
         //     var test; 
         //     var listPoints = getPointsSample();
         //     for (i=0;i<tweets.length;i++){
@@ -59,7 +61,7 @@
         }
 
 
-        //Use jscript "async defer" instead
+    //Use jscript "async defer" instead
     google.maps.event.addDomListener(window, 'load', initMap);
     google.maps.event.addListenerOnce(map, 'idle', function(){
         heatmap.setMap(map);
