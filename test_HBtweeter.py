@@ -1,0 +1,72 @@
+import unittest
+import Model
+import HBtweeter
+
+import server
+
+
+class HBTweets_IntegrationTestCase(unittest.TestCase):
+
+    def setUp(self):
+        """ Stuff to do before every test. """
+        self.client = server.app.test_client()
+        server.app.config['TESTING'] = True
+        Model.connect_to_db(server.app)
+
+    def test_home(self):
+        result = self.client.get('/')
+        self.assertEqual(200, result.status_code)
+        self.assertIn('<h1>TRACKING TWEETS AND THEIR LOCATION</h1>', result.data)
+
+    def test_map(self):
+        result = self.client.get('/map')
+        self.assertEqual(200, result.status_code)
+        self.assertIn('<div id="tweets-map"', result.data)
+
+    def test_read_db(self):
+        result = server.read_db()
+        self.assertGreaterEqual(len(result), 1)  # Checking is bringing results
+        self.assertNotEqual(result[0], 0)        # Checking is a "viable" geocode
+
+
+class HBTweets_UnitTestCase(unittest.TestCase):
+
+    def setUp(self):
+        """ Stuff to do before every test. """
+
+        Model.connect_to_db(Model.app)
+
+    def test_getGeoCode(self):
+        self.assertEqual(HBtweeter.getGeoCode('San Francisco, CA'), (24, 37.7749295, -122.4194155))
+
+    def test_get_search_tweets(self):
+        self.assertEqual(HBtweeter.get_search_tweets("Trump", 1), 1)
+
+    # Testing the API call from outside psql
+    def GoogleGeo():
+        """
+        Make a call to Googla Map API with an specific address.
+        >>> test_GoogleGeo()
+        37.4219493 -122.0847727
+        """
+        import urllib2
+        import os
+        import json
+
+        address = "1600+Amphitheatre+Parkway,+Mountain+View,+CA"
+        key = os.environ['GOOGLE_MAP_API_GEOCODE']
+        url = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (address, key)
+
+        response = urllib2.urlopen(url)
+        jsongeocode = json.loads(response.read())
+        geocode = jsongeocode["results"][0]['geometry']['location']
+
+        # pdb.set_trace()
+
+        return (geocode['lat'], geocode['lng'])
+        # make this function a test for the API, this should be:
+        # 37.4219493 -122.0847727
+
+
+if __name__ == "__main__":
+    unittest.main()
