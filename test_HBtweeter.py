@@ -33,14 +33,23 @@ class HBTweets_UnitTestCase(unittest.TestCase):
 
     def setUp(self):
         """ Stuff to do before every test. """
-
         Model.connect_to_db(Model.app)
 
-    def test_getGeoCode(self):
-        self.assertEqual(HBtweeter.getGeoCode('San Francisco, CA'), (24, 37.7749295, -122.4194155))
-
     def test_get_search_tweets(self):
+        """ Testing obtaining one tweet from Tweeter """
         self.assertEqual(HBtweeter.get_search_tweets("Trump", 1), 1)
+
+    def test_getGeoCode(self):
+        """ Testing the stored procedure that checks cached geocodes. """
+        f = Model.db.text('select getgeocode(:location)')
+        recds = Model.db.session.execute(f, {'location': 'San Francisco, CA'}).fetchone()
+        self.assertEqual('(24,37.7749295,-122.4194155)', recds['getgeocode'])
+
+    def test_psql_getGeoFromAPI(self):
+        """ Testing the stored procedure that calls google Map for geocode. """
+        f = Model.db.text('select getGeoFromAPI(:location)')
+        recds = Model.db.session.execute(f, {'location': 'San Francisco, CA'}).fetchone()
+        self.assertIn(',37.7749295,-122.4194155)', recds['getgeofromapi'])
 
     # Testing the API call from outside psql
     def GoogleGeo():
@@ -66,7 +75,6 @@ class HBTweets_UnitTestCase(unittest.TestCase):
         return (geocode['lat'], geocode['lng'])
         # make this function a test for the API, this should be:
         # 37.4219493 -122.0847727
-
 
 if __name__ == "__main__":
     unittest.main()
