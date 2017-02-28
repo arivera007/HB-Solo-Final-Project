@@ -34,7 +34,7 @@ def read_db():
     """ Read the tweet data to load to maps from DB. """
 
     # geo_tup = Model.db.session.query(Model.Tweet.lat, Model.Tweet.lon).all()
-    geo_tup = Model.db.session.query(Model.Tweet.lat, Model.Tweet.lon).filter(Model.Tweet.city_id != 1).all()
+    geo_tup = Model.db.session.query(Model.Tweet.lat, Model.Tweet.lon).filter(Model.Tweet.city_id > 0).all()
 
     # Translating to list because JavaScript does not understand tuples.
     return [[x[0], x[1]] for x in geo_tup]

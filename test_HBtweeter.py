@@ -49,7 +49,7 @@ class HBTweets_UnitTestCase(unittest.TestCase):
         """ Testing the stored procedure that calls google Map for geocode. """
         f = Model.db.text('select getGeoFromAPI(:location)')
         recds = Model.db.session.execute(f, {'location': 'San Francisco, CA'}).fetchone()
-        self.assertIn(',37.7749295,-122.4194155)', recds['getgeofromapi'])
+        self.assertIn(',37.7749295,-122.4194155)', recds['getgeofromapi'])  # Column city is not Unique, so it returns a new city_id when I run this Stored Procedure from here.
 
     # Testing the API call from outside psql
     def GoogleGeo():

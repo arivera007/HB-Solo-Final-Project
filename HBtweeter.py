@@ -3,6 +3,7 @@ import tweepy
 import Model
 from sqlalchemy import exc
 import pdb
+from google.cloud import language
 
 
 RECORDS_SKIPPED = 0      # Best way to put this variable, global for now ??
@@ -106,9 +107,24 @@ def getGeoCode(location):
     return city_id, lat, lon
 
 
+def get_sentiment(text):
+    """Gets sentiment for the text received from an API."""
+    language_client = language.Client()
+
+    #Instantiates a plain text document.
+    document = language_client.document_from_text(text)
+
+    # Detects sentiment of the text.
+    sentiment = document.analyze_sentiment()
+
+    print ('Score: {}'.format(sentiment.score))
+    print('Magnitude: {}'.format(sentiment.magnitude))
+
+
 #-------------------------------------------------------------------#
 
 if __name__ == '__main__':
     Model.connect_to_db(Model.app)
 
-    get_tweets()
+    # get_tweets()
+    get_sentiment("I love you very much")
