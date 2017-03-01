@@ -1,11 +1,12 @@
 """Creating Google Map with tweeter information."""
 
 from jinja2 import StrictUndefined
-from flask import Flask, render_template     # , jsonify
+from flask import Flask, render_template, request     # , jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
 # from model import connect_to_db, db
 import Model
+import HBtweeter
 
 app = Flask(__name__)
 app.secret_key = "queonda"
@@ -19,6 +20,15 @@ def index():
     """Show homepage."""
 
     return render_template("home.html")
+
+
+@app.route('/calculate-tweets')
+def calculate_tweets():
+    """Hits Twitter to get location and sentiment."""
+    term = request.args.get("term")
+    qty = request.args.get("qty")
+    HBtweeter.get_search_tweets(term, qty)
+    return sentiment_map()
 
 
 @app.route('/map')

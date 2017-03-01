@@ -49,6 +49,8 @@ def get_search_tweets(search_term, tweet_count):
 
     # Constructing Tweets
     for tweet in near_tweets:
+        print '*********************************************************'
+        print tweet.id, tweet.author.location
         city_id = None
         if tweet.coordinates is None:
             if tweet.author.location:
@@ -68,6 +70,7 @@ def get_search_tweets(search_term, tweet_count):
                                      user_id=tweet.author.id,
                                      text=tweet.text,
                                      author_location=tweet.author.location,
+                                     sentiment=get_sentiment(tweet.text),
                                      city_id=city_id, lat=lat, lon=lon)
             try:
                 Model.db.session.add(tweet_data)
@@ -79,7 +82,8 @@ def get_search_tweets(search_term, tweet_count):
             except exc.SQLAlchemyError as e:        # How do I get the description
                 RECORDS_SKIPPED += 1
 
-            print city_id, lat, lon
+            print city_id, lat, lon, tweet_data.sentiment
+            print tweet_data.text
         else:
             RECORDS_SKIPPED += 1
 
@@ -148,4 +152,5 @@ if __name__ == '__main__':
 
     # get_tweets()
     # get_sentiment("I love you very much")
-    update_sentiment()
+    # update_sentiment()
+    get_search_tweets('Trump', 5)
