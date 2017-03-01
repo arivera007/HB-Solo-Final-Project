@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block head %}
+
+    <title>Tweets Map</title>
+    <style>
+        html, body, #sentiment-tweets-map {
+            height: 100%;
+            margin: 0px;
+        }
+
+        .window-content {
+            color: #04162b;;
+        }
+    </style>
+
+
+    <!--
+    <script src='https://maps.googleapis.com/maps/api/js?key=<var class="my_key"</var>></script>
+-->
+    <script src='https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAP_API_JS'></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script>
+        var map, heatmap;
+        var tweets = {{ geo_tweets|safe}}
+
+        console.log(tweets.length)
+
+        function initMap() {
+            var mapOptions = {
+                zoom: 5,
+                center: new google.maps.LatLng(39.8,-95.583068847656)   //Center of US
+            };
+
+            map = new google.maps.Map(
+                    document.getElementById('sentiment-tweets-map'),
+                    mapOptions);
+            
+            var test, icon; 
+            var listPoints = getPoints();
+            for (i=0;i<tweets.length;i++){
+                
+                icon = 'http://maps.google.com/mapfiles/ms/icons/'
+                tweet_sent = tweets[i][2]
+                if(tweet_sent > 0){
+                    icon += 'blue-dot.png' 
+                } else if (tweet_sent < 0){icon += 'red-dot.png'}
+                else {icon += 'yellow-dot.png'}
+
+                test = new google.maps.Marker({
+                    position: new google.maps.LatLng(tweets[i][0], tweets[i][1]),
+                    icon: icon,
+                    map: map
+                });
+            }
+        }
+
+
+        function getPoints(){
+            map_points = []
+            for (i=0; i<tweets.length; i++){
+                map_points.push(new google.maps.LatLng(tweets[i][0], tweets[i][1]))
+            }
+            return map_points;
+        }
+
+    //Use jscript "async defer" instead
+    google.maps.event.addDomListener(window, 'load', initMap);
+
+    </script>
+<!--
+    <script async defer src=GOOGLE_MAP_API_CALL></script>
+-->
+
+
+{% endblock %}
+
+
+{% block body %}
+    <div id="sentiment-tweets-map"></div>
+{% endblock %}

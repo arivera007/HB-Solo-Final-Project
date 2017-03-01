@@ -109,6 +109,7 @@ def getGeoCode(location):
 
 def get_sentiment(text):
     """Gets sentiment for the text received from an API."""
+    # print text
     language_client = language.Client()
 
     #Instantiates a plain text document.
@@ -117,8 +118,27 @@ def get_sentiment(text):
     # Detects sentiment of the text.
     sentiment = document.analyze_sentiment()
 
-    print ('Score: {}'.format(sentiment.score))
-    print('Magnitude: {}'.format(sentiment.magnitude))
+    # print ('Score: {}'.format(sentiment.score))
+    # print('Magnitude: {}'.format(sentiment.magnitude))
+    return sentiment.score
+
+
+def update_sentiment():
+    """Temp function to update the play data with sentiment"""
+    test = Model.Tweet.query.filter(Model.Tweet.city_id > 1, Model.Tweet.sentiment.isnot(None)).all()
+
+    i = 0
+    y = len(test)
+    for tweet in test:
+        tweet.sentiment = 10 * get_sentiment(tweet.text)
+        i += 1
+        print '.'
+        if ((i % 25) == 0):
+            Model.db.session.commit()
+            print "Commiting %s of %s" % (i, y)
+
+    Model.db.session.commit()
+    print i
 
 
 #-------------------------------------------------------------------#
@@ -127,4 +147,5 @@ if __name__ == '__main__':
     Model.connect_to_db(Model.app)
 
     # get_tweets()
-    get_sentiment("I love you very much")
+    # get_sentiment("I love you very much")
+    update_sentiment()
