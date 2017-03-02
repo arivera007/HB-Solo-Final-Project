@@ -40,7 +40,7 @@ class Geocode(db.Model):
 
     city_id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(50), nullable=False)
-    state = db.Column(db.String(50), nullable=False)
+    country = db.Column(db.String(50), nullable=False)
     lat = db.Column(db.Float, nullable=False)
     lon = db.Column(db.Float, nullable=False)
 
@@ -66,7 +66,7 @@ def connect_to_db(app):
     """Connect the database to our Flask app."""
 
     # Configure to use our database.
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///tweets'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///live_tweets'
     app.config['SQLALCHEMY_ECHO'] = False
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
@@ -85,6 +85,5 @@ if __name__ == "__main__":
     connect_to_db(app)
     print "Connected to DB."
 
-    # if needs to start from ZERO. ??
-    # load .sql file with data dumped to tweeter and cachedgeocode
+    db.create_all()
     # load script that converts

@@ -17,7 +17,7 @@
     <!--
     <script src='https://maps.googleapis.com/maps/api/js?key=<var class="my_key"</var>></script>
 -->
-    <script src='https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAP_API_JS'></script>
+    <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyACd_VggI1zknStMm6P_NOrP37QxEc--IE'></script>
     <script src="https://code.jquery.com/jquery.js"></script>
     <script>
         var map, heatmap;
@@ -36,7 +36,6 @@
                     mapOptions);
             
             var test, icon; 
-            var listPoints = getPoints();
             for (i=0;i<tweets.length;i++){
                 
                 icon = 'http://maps.google.com/mapfiles/ms/icons/'
@@ -54,14 +53,6 @@
             }
         }
 
-
-        function getPoints(){
-            map_points = []
-            for (i=0; i<tweets.length; i++){
-                map_points.push(new google.maps.LatLng(tweets[i][0], tweets[i][1]))
-            }
-            return map_points;
-        }
 
     //Use jscript "async defer" instead
     google.maps.event.addDomListener(window, 'load', initMap);

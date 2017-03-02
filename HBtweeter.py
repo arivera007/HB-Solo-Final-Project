@@ -70,7 +70,7 @@ def get_search_tweets(search_term, tweet_count):
                                      user_id=tweet.author.id,
                                      text=tweet.text,
                                      author_location=tweet.author.location,
-                                     sentiment=get_sentiment(tweet.text),
+                                     sentiment=10*get_sentiment(tweet.text), #To make it integer
                                      city_id=city_id, lat=lat, lon=lon)
             try:
                 Model.db.session.add(tweet_data)

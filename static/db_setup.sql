@@ -1,3 +1,5 @@
+-- CREATE LANGUAGE plpythonu;
+
 -- CREATE TYPE geoResult AS (city_id int, lat float, lon float);
 
 CREATE or replace FUNCTION getGeocode (location text) RETURNS geoResult AS $$
@@ -46,8 +48,7 @@ CREATE or REPLACE FUNCTION getGeoFromAPI (location text) RETURNS geoResult AS $$
         except StopIteration: # Look for base exception
             country = location
 
-        # Change to COuntry instead of state, city to city_state ??
-        query = plpy.prepare("INSERT INTO cachedgeocodes (city, state, lat, lon) VALUES ($1, $2, $3, $4) returning city_id, lat, lon", ["text", "text", "float", "float"])
+        query = plpy.prepare("INSERT INTO cachedgeocodes (city, country, lat, lon) VALUES ($1, $2, $3, $4) returning city_id, lat, lon", ["text", "text", "float", "float"])
         recds = plpy.execute(query, [location, country, geocode['lat'], geocode['lng']])
         if recds.nrows > 0 : # and recds.status() = SPI_OK_INSERT
             return recds[0]
