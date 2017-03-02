@@ -49,6 +49,25 @@ def sentiment_map():
     return render_template("sentiment_map.html", geo_tweets=geo_tweets)
 
 
+@app.route('/sentiment-plot')
+def sentiment_plot():
+    """Show map with tweets' sentiment."""
+    # Should this data manipulation be on the client ??
+    geo_tweets = read_db_sentiment()
+    data_counts = {}
+    for x in geo_tweets:   # ????? Check if magnitud is > 20 include it in 20.
+        key = str(x[2])+','+str(x[3])
+        data_counts[key] = data_counts.get(key, 0) + 1
+    plot_data = [['ID', 'Sentiment', 'Magnitude', 'Nothing', 'Count']]
+    for key, value in data_counts.iteritems():
+        keys = key.split(',')
+        sentiment = int(keys[0])
+        magnitud = int(keys[1])
+        plot_data.append([key, sentiment, magnitud, '', value])
+
+    return render_template("sentiment_plot.html", plot_data=plot_data)
+
+
 def read_db():
     """ Read the tweet data to load to maps from DB. """
 
@@ -63,10 +82,10 @@ def read_db_sentiment():
     """ Read the tweet data to load to maps from DB. """
 
     # geo_tup = Model.db.session.query(Model.Tweet.lat, Model.Tweet.lon).all()
-    geo_tup = Model.db.session.query(Model.Tweet.lat, Model.Tweet.lon, Model.Tweet.sentiment).filter(Model.Tweet.sentiment.isnot(None)).all()
+    geo_tup = Model.db.session.query(Model.Tweet.lat, Model.Tweet.lon, Model.Tweet.sentiment, Model.Tweet.magnitude).filter(Model.Tweet.sentiment.isnot(None)).all()
 
     # Translating to list because JavaScript does not understand tuples.
-    return [[x[0], x[1], x[2]] for x in geo_tup]
+    return [[x[0], x[1], x[2], x[3]] for x in geo_tup]
 
 #---------------------------------------------------------------------#
 

@@ -66,11 +66,13 @@ def get_search_tweets(search_term, tweet_count):
             lat = tweet.coordinates['coordinates'][0]
 
         if tweet_with_location:
+            sentiment = get_sentiment(tweet.text)
             tweet_data = Model.Tweet(tweet_id=tweet.id,
                                      user_id=tweet.author.id,
                                      text=tweet.text,
                                      author_location=tweet.author.location,
-                                     sentiment=10*get_sentiment(tweet.text), #To make it integer
+                                     sentiment=10*sentiment.score, #To make it integer
+                                     magnitude=10*sentiment.magnitude,
                                      city_id=city_id, lat=lat, lon=lon)
             try:
                 Model.db.session.add(tweet_data)
@@ -124,7 +126,7 @@ def get_sentiment(text):
 
     # print ('Score: {}'.format(sentiment.score))
     # print('Magnitude: {}'.format(sentiment.magnitude))
-    return sentiment.score
+    return sentiment
 
 
 def update_sentiment():

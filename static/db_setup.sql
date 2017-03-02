@@ -1,6 +1,6 @@
--- CREATE LANGUAGE plpythonu;
+CREATE LANGUAGE plpythonu;
 
--- CREATE TYPE geoResult AS (city_id int, lat float, lon float);
+CREATE TYPE geoResult AS (city_id int, lat float, lon float);
 
 CREATE or replace FUNCTION getGeocode (location text) RETURNS geoResult AS $$
     import urllib2

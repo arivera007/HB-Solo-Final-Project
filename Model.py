@@ -26,6 +26,7 @@ class Tweet(db.Model):
     author_location = db.Column(db.String(50))  # What is the max in twitter ??
     city_id = db.Column(db.Integer, nullable=True)
     sentiment = db.Column(db.Integer, nullable=True)
+    magnitude = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
         """ Returns infor about the tweet """

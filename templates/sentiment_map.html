@@ -37,14 +37,14 @@
             
             var test, icon; 
             for (i=0;i<tweets.length;i++){
-                
+                //Coloring marker with sentiment
                 icon = 'http://maps.google.com/mapfiles/ms/icons/'
                 tweet_sent = tweets[i][2]
                 if(tweet_sent > 0){
                     icon += 'blue-dot.png' 
                 } else if (tweet_sent < 0){icon += 'red-dot.png'}
                 else {icon += 'yellow-dot.png'}
-
+                // Creating marker
                 test = new google.maps.Marker({
                     position: new google.maps.LatLng(tweets[i][0], tweets[i][1]),
                     icon: icon,
