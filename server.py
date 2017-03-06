@@ -63,7 +63,12 @@ def sentiment_plot():
         keys = key.split(',')
         sentiment = int(keys[0])
         magnitud = int(keys[1])
-        plot_data.append([key, sentiment, magnitud, '', value])
+        color = 'Neutral'
+        if sentiment > 0:
+            color = 'Positive'
+        elif sentiment < 0:
+            color = 'Negative'
+        plot_data.append([key, sentiment, magnitud, color, value])
 
     return render_template("sentiment_plot.html", plot_data=plot_data)
 
