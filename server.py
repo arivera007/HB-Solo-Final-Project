@@ -75,6 +75,7 @@ def sentiment_plot():
 
 @app.route('/all-views')
 def all_views():
+    term = request.args.get("term");
     geo_tweets_1 = read_db()
     geo_tweets = read_db_sentiment()
     data_counts = {}
@@ -92,7 +93,7 @@ def all_views():
         elif sentiment < 0:
             color = 'Negative'
         plot_data.append([key, sentiment, magnitud, color, value])
-    return render_template("all_views.html", geo_tweets_1=geo_tweets_1, geo_tweets=geo_tweets, plot_data=plot_data)
+    return render_template("all_views.html", search_term=term, geo_tweets_1=geo_tweets_1, geo_tweets=geo_tweets, plot_data=plot_data)
 
 
 def read_db():

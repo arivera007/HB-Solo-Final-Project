@@ -108,6 +108,9 @@
                     map: map
                 });
             }
+            // $('#termino, [for="term"]').prop('disabled', true).addClass('disabled');
+            //$('#SearchTerm').val(request.args.get("term"));
+            $('#SearchTerm').text("Results for term: {{search_term}}");
         }
 
 
@@ -152,13 +155,14 @@
 
 
 {% block body %}
+<h1 id="SearchTerm" style="margin-left: 10px;"><h1>
 <div class="container-fluid">
     <div id="tweets-map" class="col-md-6" style="height: 400px"></div>
     <div id="series_chart_div"  class="col-md-6" style="height: 400px"></div>
 </div>
 <div class="container-fluid" style="margin-top:15px">
     <div class="col-md-8 col-md-offset-4">
-        <div id="sentiment-tweets-map" style="height: 600px"></div>
+        <div id="sentiment-tweets-map" style="height: 500px"></div>
     </div>
 </div>
 {% endblock %}
