@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block head %}
+
+    <title>Tweets Map</title>
+    <style>
+        #tweets-map, #sentiment-tweets-map, #series_chart_div {
+            height: 100%;
+            margin: 0px;
+        }
+
+        .window-content {
+            color: #04162b;;
+        }
+        html, body{
+            height: 100%;
+        }
+        .half{
+            height: 49%;
+        }
+        .separator {
+            height: 2%;
+        }
+    </style>
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyACd_VggI1zknStMm6P_NOrP37QxEc--IE&libraries=visualization&dummy=.js"></script>
+
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script>
+        var map, heatmap;
+        var tweets_1 = {{ geo_tweets_1|safe}}
+
+        console.log(tweets_1.length)
+
+        function initMap_1() {
+            var mapOptions = {
+                zoom: 4,
+                center: new google.maps.LatLng(39.8,-95.583068847656)   //Center of US
+            };
+            // debugger;
+            map = new google.maps.Map(
+                    document.getElementById('tweets-map'),
+                    mapOptions);
+            
+            heatmap = new google.maps.visualization.HeatmapLayer({
+                data: getPoints(),
+                map: map
+            });
+
+            // To make it more visible
+            heatmap.set('radius', heatmap.get('radius') ? null : 50)
+
+        }
+
+
+        function getPoints(){
+            map_points = []
+            for (i=0; i<tweets_1.length; i++){
+                // map_points.push(new google.maps.LatLng(tweets[i][0], tweets[i][1]))
+                map_points.push({location: new google.maps.LatLng(tweets_1[i][0], tweets_1[i][1]), weight: 2})
+            }
+            return map_points;
+        }
+
+
+    //Use jscript "async defer" instead
+    google.maps.event.addDomListener(window, 'load', initMap_1);
+    // debugger;
+    google.maps.event.addListenerOnce(map, 'idle', function(){
+        // debugger;
+        heatmap.setMap(map);
+    });
+
+
+</script>  
+
+
+
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script>
+        var map, heatmap;
+        var tweets = {{ geo_tweets|safe}}
+
+        console.log(tweets.length)
+
+        function initMap() {
+            var mapOptions = {
+                zoom: 4,
+                center: new google.maps.LatLng(39.8,-95.583068847656)   //Center of US
+            };
+
+            map = new google.maps.Map(
+                    document.getElementById('sentiment-tweets-map'),
+                    mapOptions);
+            
+            var test, icon; 
+            for (i=0;i<tweets.length;i++){
+                //Coloring marker with sentiment
+                icon = 'http://maps.google.com/mapfiles/ms/icons/'
+                tweet_sent = tweets[i][2]
+                if(tweet_sent > 0){
+                    icon += 'blue-dot.png' 
+                } else if (tweet_sent < 0){icon += 'red-dot.png'}
+                else {icon += 'yellow-dot.png'}
+                // Creating marker
+                test = new google.maps.Marker({
+                    position: new google.maps.LatLng(tweets[i][0], tweets[i][1]),
+                    icon: icon,
+                    map: map
+                });
+            }
+        }
+
+
+        //Use jscript "async defer" instead
+        google.maps.event.addDomListener(window, 'load', initMap);
+
+        </script> 
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      var tweets_3 = {{ plot_data|safe}}
+      console.log(tweets_3.length)
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawSeriesChart);
+
+      function drawSeriesChart() {
+
+        var data = google.visualization.arrayToDataTable(tweets_3);
+
+        var options = {
+          title: 'Correlation between tweet sentiment and strenght of the sentiment ' +
+                 'and amount of tweets with same sentiment',
+          hAxis: {title: 'Sentiment'},
+          vAxis: {title: 'Strenght of Sentiment'},
+          bubble: {textStyle: {fontSize: 11}}
+        };
+
+        var chart = new google.visualization.BubbleChart(document.getElementById('series_chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+
+
+
+
+<!--
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=KEY_GOES_HERE&callback=initMap"><script>
+-->
+{% endblock %}
+
+
+{% block body %}
+<div class="container-fluid">
+    <div id="tweets-map" class="col-md-6" style="height: 400px"></div>
+    <div id="series_chart_div"  class="col-md-6" style="height: 400px"></div>
+</div>
+<div class="container-fluid" style="margin-top:15px">
+    <div class="col-md-8 col-md-offset-4">
+        <div id="sentiment-tweets-map" style="height: 600px"></div>
+    </div>
+</div>
+{% endblock %}

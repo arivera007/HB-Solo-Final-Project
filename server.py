@@ -28,7 +28,7 @@ def calculate_tweets():
     term = request.args.get("term")
     qty = request.args.get("qty")
     HBtweeter.get_search_tweets(term, qty)
-    return sentiment_map()
+    return all_views()
 
 
 @app.route('/map')
@@ -73,6 +73,28 @@ def sentiment_plot():
     return render_template("sentiment_plot.html", plot_data=plot_data)
 
 
+@app.route('/all-views')
+def all_views():
+    geo_tweets_1 = read_db()
+    geo_tweets = read_db_sentiment()
+    data_counts = {}
+    for x in geo_tweets:   # ????? Check if magnitud is > 20 include it in 20.
+        key = str(x[2])+','+str(x[3])
+        data_counts[key] = data_counts.get(key, 0) + 1
+    plot_data = [['ID', 'Sentiment', 'Magnitude', 'Nothing', 'Count']]
+    for key, value in data_counts.iteritems():
+        keys = key.split(',')
+        sentiment = int(keys[0])
+        magnitud = int(keys[1])
+        color = 'Neutral'
+        if sentiment > 0:
+            color = 'Positive'
+        elif sentiment < 0:
+            color = 'Negative'
+        plot_data.append([key, sentiment, magnitud, color, value])
+    return render_template("all_views.html", geo_tweets_1=geo_tweets_1, geo_tweets=geo_tweets, plot_data=plot_data)
+
+
 def read_db():
     """ Read the tweet data to load to maps from DB. """
 
@@ -100,4 +122,4 @@ if __name__ == "__main__":
     Model.connect_to_db(app)
     DebugToolbarExtension(app)
 
-    app.run(port=5000, host="0.0.0.0")
+    app.run(port=5000, host="0.0.0.0", debug=True)
