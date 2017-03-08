@@ -1,22 +1,28 @@
-{% extends 'base.html' %} {% block head %} {% endblock %} 
+{% extends 'base.html' %} 
+{% block head %} 
+
+{% endblock %} 
 
 {% block body %}
 <div style="text-align:center; ">
-    <div style="position: absolute; width: 800; height: 200; top: 50%; left: 50%; margin: -100px 0 0 -400px; padding: 5px;">
-    <h1>TRACKING TWEETS AND THEIR LOCATION</h1>
+    <div style="position: absolute; width: 800; height: 200; top: 50%; left: 50%; margin: -100px 0 0 -200px; padding: 5px;">
+    <h1><font color="0099FF">Tweet</font> <font color="0099FF">America</font> <font color="FE7569">Now</font></h1>
     <form action="/calculate-tweets">
       <div style="text-align: center; margin: 2em 0;">
         <div style="display:inline-block;">
-          <label for="term">Term: </label> <input id="termino" type="text" name="term" placeholder="trump"><br>
+          <label for="term">Term: </label> <input id="termino" type="text" name="term" placeholder="Term"><br>
         </div>
+        <!--
         <div style="display:inline-block; margin-left: 5px;">
-          <label for="qty">Amount of Tweets: </label> <input id="qty" type="text" type="number" min="0" value="200" name="qty" style="width: 6em"><br>
+          <label for="qty">Amount of Tweets: </label> <input id="qty" type="text" type="number" min="0" placeholder="200" name="qty" style="width: 6em"><br>
         </div>
+        -->
         <div style="display:inline-block; margin-left: 5px;">
-          <input id="submit", type="submit" value="Search">
+          <input id="submit", type="submit" value="Discover">
         </div>
       </div>
     </form>
+    <h5>Analyzing the way Tweet America feels at this moment.</h5>
 </div> 
 </div>
 {% endblock %}
