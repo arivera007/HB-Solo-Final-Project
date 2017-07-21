@@ -35,4 +35,5 @@ Currently, I am working on the addition of a Twitter Streaming API requests to g
 
 ## <a name="database-model"></a>Database Model
 ![alt text](screenshots/database.png "database model")
+<img src="maps.png"/>
 
