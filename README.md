@@ -18,7 +18,7 @@ Hackbright Final Project. 100% my code.
   Tweet America is a mostly backend project. It is an app that shows Tweets with their location and Sentiment. Currently only covers the US. I wrote the server using Python and Flask, and SQLALchemy to talk to the DB. 
 
 #### Pride
-   My biggest challenge was the calculation of the geolocation of the tweets. To solve this I built a <a href="https://github.com/arivera007/HB-Solo-Final-Project/blob/master/static/db_setup.sql">Store Procedure</a> in the database written in Python, that calls the API of Google Maps Geocode. Also, within this <a href="https://github.com/arivera007/HB-Solo-Final-Project/blob/master/static/db_setup.sql">Store Procedure</a>, I implemented a cache that continually saves the results from Google Maps to minimize the number of future calls.
+   My biggest challenge was the calculation of the geolocation of the tweets. To solve this I built a <a href="https://github.com/arivera007/HB-Solo-Final-Project/blob/master/static/db_setup.sql">Store Procedure written in Python</a> , that calls the API of Google Maps Geocode. Also, within this <a href="https://github.com/arivera007/HB-Solo-Final-Project/blob/master/static/db_setup.sql">Store Procedure</a>, I implemented a cache that continually saves the results from Google Maps to minimize the number of future calls.
 
 #### Flow
   We start by inputting the Search Term that we want to learn about. With this term, using an AJAX call I send the request. My server in turn goes and hit Twitter’s Search API  to get the most recent tweets located in the US. 
