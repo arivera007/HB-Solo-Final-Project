@@ -1,5 +1,5 @@
 # Tweet America
-Maps sentiment of the tweets in USA.
+Maps sentiment of the tweets about an specific term in USA locatios.
 Hackbright Final Project. 100% my code.
 
 ## Contents
@@ -25,9 +25,13 @@ Hackbright Final Project. 100% my code.
 Each tweet then goes to Google’s Natural Language API to get its prediction about the feeling or sentiment about the content of the tweet. If the tweet contains feel good words it gets tag as positive.  After that each tweet is saved in a Postgres SQL database. 
 Finally the server replies back with all the processed tweets and the  information gets displayed in a map with their corresponding location and sentiment.
 
+<img src="static/login-screen.png"/>
+
 #### Visualization
   I divided the results in three different views for better perception of the data. Using Jinja, BootStrap, JavaScript, and Google Maps API, this map shows more clearly the density of tweets in each location. This second map, shows the location of the tweet and its sentiment. Red is negative, Blues is positive and Yellow is Neutral. 
 This last section, made with Google Charts, is a view of the leaning of the sentiment as a whole regardless of the location.
+	
+<img src="static/results-screen.png"/>
    
 ## <a name="upcoming"></a>Upcoming
 Currently, I am working on the addition of a Twitter Streaming API requests to get dynamic views of the data.
